@@ -1,5 +1,7 @@
 package com.example.konata.swipeviewcontentprovider;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -102,14 +107,12 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a RecipeFragment (defined as a static inner class below).
             position++;
-//            return RecipeFragment.newInstance("title", "instruction " + position );
             Recipe r = recipeRepository.getItem(position);
-            return RecipeFragment.newInstance( r.getName(), r.getDescription() );
+            return RecipeFragment.newInstance( r.getName(), r.getDescription(), r.getImage() );
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return this.recipeRepository.count();
         }
     }
@@ -124,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
          */
         private static final String ARG_RECIPE_TITLE = "ARG_RECIPE_TITLE";
         private static final String ARG_RECIPE_INSTRUCTION = "ARG_RECIPE_INSTRUCTION";
+        private static final String ARG_RECIPE_IMAGE = "ARG_RECIPE_IMAGE";
 
         public RecipeFragment() {
         }
@@ -132,15 +136,22 @@ public class MainActivity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static RecipeFragment newInstance(String recipeName, String recipeInstruction) {
+        public static RecipeFragment newInstance(String recipeName, String recipeInstruction, Bitmap b) {
             RecipeFragment fragment = new RecipeFragment();
             Bundle args = new Bundle();
 
             args.putString(ARG_RECIPE_TITLE, recipeName);
             args.putString(ARG_RECIPE_INSTRUCTION, recipeInstruction);
+            args.putByteArray(ARG_RECIPE_IMAGE, getBitmapAsByteArray(b));
 
             fragment.setArguments(args);
             return fragment;
+        }
+
+        public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 0, outputStream);
+            return outputStream.toByteArray();
         }
 
         @Override
@@ -150,9 +161,16 @@ public class MainActivity extends AppCompatActivity {
 
             TextView textView = rootView.findViewById(R.id.recipe_name);
             TextView textView2 = rootView.findViewById(R.id.recipe_instruction);
+            ImageView imageView = rootView.findViewById(R.id.recipe_image);
 
             textView.setText( getArguments().getString(ARG_RECIPE_TITLE) );
             textView2.setText( getArguments().getString(ARG_RECIPE_INSTRUCTION) );
+            textView2.setText( getArguments().getString(ARG_RECIPE_INSTRUCTION) );
+
+
+            byte[] imgByte = getArguments().getByteArray(ARG_RECIPE_IMAGE);
+            Bitmap b = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
+            imageView.setImageBitmap( b );
 
             return rootView;
         }

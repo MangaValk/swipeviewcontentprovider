@@ -4,6 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by marmm on 15/03/2018.
@@ -16,7 +20,8 @@ public class RecipeRepository {
     private final String[] RECIPES_ALL_COLUMNS = {
             RecipeContract.RecipeEntry._ID,
             RecipeContract.RecipeEntry.COLUMN_NAME_NAME,
-            RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION};
+            RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION,
+            RecipeContract.RecipeEntry.COLUMN_IMAGE};
 
     public RecipeRepository(Context context) {
         dbHelper = new DBHelper(context);
@@ -27,8 +32,10 @@ public class RecipeRepository {
         //Add default items.
         if (this.count() == 0)
         {
-            this.save(new Recipe(0, "hamburger", "cooking a hamburger", 0));
-            this.save(new Recipe(0, "Turkey", "cooking a turkey", 0));
+            Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.hamburger);
+            this.save(new Recipe(0, "hamburger", "cooking a hamburger", image));
+            image = BitmapFactory.decodeResource(context.getResources(), R.drawable.turkey);
+            this.save(new Recipe(0, "Turkey", "cooking a turkey", image));
         }
     }
 
@@ -42,12 +49,19 @@ public class RecipeRepository {
         return count;
     }
 
+    public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, outputStream);return outputStream.toByteArray();
+    }
+
     public void save(Recipe recipe) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(RecipeContract.RecipeEntry.COLUMN_NAME_NAME, recipe.getName());
         values.put(RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION, recipe.getDescription());
+        values.put(RecipeContract.RecipeEntry.COLUMN_IMAGE, getBitmapAsByteArray(recipe.getImage()));
+
         // Inserting Row
         db.insert(RecipeContract.RecipeEntry.TABLE_NAME, null, values);
         db.close();
@@ -59,6 +73,7 @@ public class RecipeRepository {
         ContentValues values = new ContentValues();
         values.put(RecipeContract.RecipeEntry.COLUMN_NAME_NAME, recipe.getName());
         values.put(RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION, recipe.getDescription());
+        values.put(RecipeContract.RecipeEntry.COLUMN_IMAGE, getBitmapAsByteArray(recipe.getImage()));
 
         db.update(RecipeContract.RecipeEntry.TABLE_NAME, values, RecipeContract.RecipeEntry._ID + "= ?", new String[]{String.valueOf(id)});
         db.close(); // Closing database connection
@@ -99,8 +114,13 @@ public class RecipeRepository {
 
         Cursor c = database.query(RecipeContract.RecipeEntry.TABLE_NAME, RECIPES_ALL_COLUMNS, null, null, null, null, null);
         c.move(i);
+
         String name = c.getString(c.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_NAME_NAME));
         String description = c.getString(c.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION));
-        return new Recipe(0, name, description, 0 );
+
+        byte[] imgByte = c.getBlob(c.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_IMAGE));
+        Bitmap b = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
+
+        return new Recipe(0, name, description, b );
     }
 }

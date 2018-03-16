@@ -1,5 +1,7 @@
 package com.example.konata.swipeviewcontentprovider;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by marmm on 15/03/2018.
  */
@@ -7,9 +9,9 @@ package com.example.konata.swipeviewcontentprovider;
 public class Recipe {
     private Integer mId;
     private String name, description;
-    private Integer image;
+    private Bitmap image;
 
-    public Recipe(Integer mId, String name, String description, Integer image) {
+    public Recipe(Integer mId, String name, String description, Bitmap image) {
         this.mId = mId;
         this.name = name;
         this.description = description;
@@ -40,11 +42,11 @@ public class Recipe {
         this.description = description;
     }
 
-    public Integer getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(Integer image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }

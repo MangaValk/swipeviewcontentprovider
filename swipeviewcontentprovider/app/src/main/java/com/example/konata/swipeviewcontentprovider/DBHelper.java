@@ -19,6 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "(" +
                     RecipeContract.RecipeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
                     + RecipeContract.RecipeEntry.COLUMN_NAME_NAME + " TEXT, "
+                    + RecipeContract.RecipeEntry.COLUMN_IMAGE + " BLOB, "
                     + RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION + " TEXT )";
 
     //Constructor
