@@ -1,12 +1,16 @@
 package com.example.konata.swipeviewcontentprovider;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
  * Created by marmm on 15/03/2018.
  */
 
-public final class RecipeContract {
+public final class RecipeContract
+{
+    public static final String AUTHORITY = "com.example.konata.swipeviewcontentprovider";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY  + "/" + RecipeContract.RecipeEntry.TABLE_NAME);
 
     private RecipeContract() {
     }
@@ -19,7 +23,6 @@ public final class RecipeContract {
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_IMAGE = "image";
-
     }
 
 }
