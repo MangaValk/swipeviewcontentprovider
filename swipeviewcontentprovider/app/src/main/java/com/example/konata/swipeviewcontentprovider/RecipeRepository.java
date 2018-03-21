@@ -23,20 +23,12 @@ public class RecipeRepository {
             RecipeContract.RecipeEntry.COLUMN_NAME_DESCRIPTION,
             RecipeContract.RecipeEntry.COLUMN_IMAGE};
 
+    private Context context;
+
     public RecipeRepository(Context context) {
         dbHelper = new DBHelper(context);
 
-        //Temp
-        this.reset();
-
-        //Add default items.
-        if (this.count() == 0)
-        {
-            Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.hamburger);
-            this.save(new Recipe(0, "hamburger", "cooking a hamburger", image));
-            image = BitmapFactory.decodeResource(context.getResources(), R.drawable.turkey);
-            this.save(new Recipe(0, "Turkey", "cooking a turkey", image));
-        }
+        this.context = context;
     }
 
     public int count() {
@@ -102,6 +94,15 @@ public class RecipeRepository {
 
         db.execSQL("DROP TABLE IF EXISTS " + RecipeContract.RecipeEntry.TABLE_NAME);
         dbHelper.onCreate(db);
+
+        //Add default items.
+        if (this.count() == 0)
+        {
+            Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.hamburger);
+            this.save(new Recipe(0, context.getResources().getString(R.string.recipe_hamburger_name), context.getResources().getString(R.string.recipe_hamburger_description), image));
+            image = BitmapFactory.decodeResource(context.getResources(), R.drawable.turkey);
+            this.save(new Recipe(0, context.getResources().getString(R.string.recipe_turkey_name), context.getResources().getString(R.string.recipe_turkey_description), image));
+        }
 
         db.close();
     }

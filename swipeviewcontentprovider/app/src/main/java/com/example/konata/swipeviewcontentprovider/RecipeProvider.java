@@ -43,7 +43,7 @@ public class RecipeProvider extends ContentProvider
     @Override
     public boolean onCreate()
     {
-        dbHelper = new DBHelper(getContext());
+        this.dbHelper = new DBHelper(getContext());
         return true;
     }
 
@@ -52,7 +52,7 @@ public class RecipeProvider extends ContentProvider
                         String[] selectionArgs, String sortOrder)
     {
         // Get access to underlying database (read-only for query)
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final SQLiteDatabase db = this.dbHelper.getReadableDatabase();
 
         // Write URI match code and set a variable to return a Cursor
         int match = sURIMatcher.match(uri);
