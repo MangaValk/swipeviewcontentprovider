@@ -102,7 +102,9 @@ public class RecipeRepository {
             this.save(new Recipe(0, context.getResources().getString(R.string.recipe_hamburger_name), context.getResources().getString(R.string.recipe_hamburger_description), image));
             image = BitmapFactory.decodeResource(context.getResources(), R.drawable.turkey);
             this.save(new Recipe(0, context.getResources().getString(R.string.recipe_turkey_name), context.getResources().getString(R.string.recipe_turkey_description), image));
-        }
+            image = BitmapFactory.decodeResource(context.getResources(), R.drawable.chicken);
+            this.save(new Recipe(0, context.getResources().getString(R.string.recipe_chicken_name), context.getResources().getString(R.string.recipe_chicken_description), image));
+    }
 
         db.close();
     }

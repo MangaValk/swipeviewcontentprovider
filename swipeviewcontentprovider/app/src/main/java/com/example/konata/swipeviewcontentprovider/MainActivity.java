@@ -3,13 +3,15 @@ package com.example.konata.swipeviewcontentprovider;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,7 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -27,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
     private RecipeRepository recipeRepository;
     private SectionsPagerAdapter mAdapter;
 
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    //Database related local variables
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +50,12 @@ public class MainActivity extends AppCompatActivity {
 
         this.recipeRepository = new RecipeRepository(getApplicationContext());
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
-                getContentResolver().query(RecipeContract.CONTENT_URI, null, null, null, null, null));
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        getSupportLoaderManager().initLoader(0, null, this);
+
+        updateUI();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +66,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void updateUI() {
+        mCursor = getContentResolver().query(RecipeContract.CONTENT_URI, null, null, null, null);
+
+        if (mAdapter == null) {
+//            mAdapter = new ReminderAdapter (this, mCursor );
+
+            mAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), mCursor);
+
+//            mRecyclerView.setAdapter(mAdapter);
+            mViewPager.setAdapter(mAdapter);
+        } else {
+            mAdapter.swapCursor(mCursor);
+        }
+    }
+
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mCursor != null && !mCursor.isClosed()) mCursor.close();
     }
 
     @Override
@@ -84,10 +111,35 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_reset)
         {
             recipeRepository.reset();
+            updateUI();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+
+        CursorLoader cursorLoader = new CursorLoader(this, RecipeContract.CONTENT_URI, null,
+                null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (mAdapter == null) {
+            mAdapter = new SectionsPagerAdapter (getSupportFragmentManager(), data );
+            mViewPager.setAdapter(mAdapter);
+        } else {
+            mAdapter.swapCursor(data);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
     }
 
     /**
@@ -119,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return (mCursor == null ? 0 : mCursor.getCount());
+        }
+
+        public void swapCursor(Cursor mCursor) {
+            this.mCursor = mCursor;
         }
     }
 
