@@ -19,6 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+/**
+ * author hogeschool van amsterdam
+ */
+
 public class MainActivity extends AppCompatActivity implements  LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
@@ -29,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private RecipeRepository recipeRepository;
     private SectionsPagerAdapter mAdapter;
 
     /**
@@ -48,22 +51,10 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.recipeRepository = new RecipeRepository(getApplicationContext());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
 
         getSupportLoaderManager().initLoader(0, null, this);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
     }
 
     protected void onResume() {
@@ -73,31 +64,6 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
     protected void onPause() {
         super.onPause();
         if (mCursor != null && !mCursor.isClosed()) mCursor.close();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_reset)
-        {
-            recipeRepository.reset();
-            mAdapter.notifyDataSetChanged();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

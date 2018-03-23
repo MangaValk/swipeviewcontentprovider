@@ -13,6 +13,10 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 
 /**
+ * author hogeschool van amsterdam
+ */
+
+/**
  * A placeholder fragment containing a simple view.
  */
 public class RecipeFragment extends Fragment

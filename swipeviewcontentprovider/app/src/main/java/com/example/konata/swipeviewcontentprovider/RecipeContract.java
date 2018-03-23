@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * Created by marmm on 15/03/2018.
+ * author hogeschool van amsterdam
  */
 
 public final class RecipeContract

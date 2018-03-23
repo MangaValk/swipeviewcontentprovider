@@ -3,7 +3,7 @@ package com.example.konata.swipeviewcontentprovider;
 import android.graphics.Bitmap;
 
 /**
- * Created by marmm on 15/03/2018.
+ * author hogeschool van amsterdam
  */
 
 public class Recipe {
