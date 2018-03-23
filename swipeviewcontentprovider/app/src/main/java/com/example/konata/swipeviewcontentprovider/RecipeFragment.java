@@ -46,7 +46,7 @@ public class RecipeFragment extends Fragment
 
     public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 12, outputStream);
         return outputStream.toByteArray();
     }
 

@@ -43,7 +43,7 @@ public class RecipeRepository {
 
     public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 0, outputStream);return outputStream.toByteArray();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 12, outputStream);return outputStream.toByteArray();
     }
 
     public void save(Recipe recipe) {
