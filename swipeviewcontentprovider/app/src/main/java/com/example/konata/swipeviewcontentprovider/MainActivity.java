@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
 
         getSupportLoaderManager().initLoader(0, null, this);
 
-        updateUI();
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,24 +66,8 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
 
     }
 
-    private void updateUI() {
-        mCursor = getContentResolver().query(RecipeContract.CONTENT_URI, null, null, null, null);
-
-        if (mAdapter == null) {
-//            mAdapter = new ReminderAdapter (this, mCursor );
-
-            mAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), mCursor);
-
-//            mRecyclerView.setAdapter(mAdapter);
-            mViewPager.setAdapter(mAdapter);
-        } else {
-            mAdapter.swapCursor(mCursor);
-        }
-    }
-
     protected void onResume() {
         super.onResume();
-        updateUI();
     }
     @Override
     protected void onPause() {
@@ -111,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements  LoaderManager.Lo
         if (id == R.id.action_reset)
         {
             recipeRepository.reset();
-            updateUI();
+            mAdapter.notifyDataSetChanged();
             return true;
         }
 
